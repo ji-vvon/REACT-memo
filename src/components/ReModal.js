@@ -1,20 +1,40 @@
 import React, {Component} from 'react';
 import './Modal.scss';
 
-class Modal extends Component {
+class ReModal extends Component {
     state = {
-        title: '',
-        content: '',
-        author: ''
+        title: "",
+        content: "",
+        author: "",
     };
 
+    handleUpdate = (event) => {
+        event.preventDefault();
+        console.log("수정클릭되는중")
+        this.props.onUpdate(this.props.data.index, this.state);
+        this.setState({
+            title:'',
+            content:'',
+            author:''
+        });
+        this.props.reclose();
+    };
+
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            title:nextProps.data.title,
+            content:nextProps.data.content,
+            author: nextProps.data.author,
+        });
+    }
+        
     handleSubmit = (event) => {
         event.preventDefault();
         this.props.onCreate(this.state);
         this.setState({
             title:'',
             content:'',
-            author:''
+            author:'',
         });
         this.props.close();
     };
@@ -24,18 +44,26 @@ class Modal extends Component {
         this.setState({[name] : value})
     };
 
+    handleRemove = () => {
+        console.log(this.props.data.index)
+        console.log("삭제클릭되는중")
+        this.props.onRemove(this.props.data.index);
+        this.props.reclose();
+    };
+
     render() {
-        const {isOpen, close} = this.props;
+        console.log(this.props);
+        const {reOpen, reclose} = this.props;
 
         return(
             <React.Fragment>
                 {
-                    isOpen?
+                    reOpen?
                     <React.Fragment>
-                        <div className="Modal-verlay" onClick = {close} />
+                        <div className="Modal-verlay" onClick = {reclose} />
                         <div className="Modal">
-                            <h1 className="title">메모를 기록하세요!</h1>
-                            <form onSubmit = {this.handlelSubmit}>
+                            <h1 className="title">메모를 수정하세요!</h1>
+                            <form onSubmit = {this.handleUpdate}>
                                 <div className="content">
                                     <h4>
                                         <input type="text" placeholder="아이디를 입력하세요."
@@ -54,7 +82,10 @@ class Modal extends Component {
                                 </div>
                                 <div className="button-wrap">
                                     <button type="submit">
-                                        <p>메모 추가하기</p>
+                                        <p>수정하기</p>
+                                    </button>
+                                    <button type="button" onClick={this.handleRemove}>
+                                        <p>삭제하기</p>
                                     </button>
                                 </div>
                             </form>
@@ -66,4 +97,4 @@ class Modal extends Component {
     }
 }
 
-export default Modal;
+export default ReModal;
